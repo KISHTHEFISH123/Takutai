@@ -1,0 +1,246 @@
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+
+const products = [
+  {
+    id: 1,
+    name: "Takutai Original Speciality Wetsuit (Adults)",
+    type: "Adults",
+    price: 150,
+    sizes: ["S", "M", "L", "XL"],
+    colors: ["pink", "blue", "green", "purple", "black"],
+    image: "https://via.placeholder.com/300x200?text=Adult+Wetsuit"
+  },
+  {
+    id: 2,
+    name: "Takutai Original Speciality Wetsuit (Kids)",
+    type: "Kids",
+    price: 90,
+    sizes: ["XS", "S", "M", "L"],
+    colors: ["pink", "blue", "green", "purple", "black"],
+    image: "https://via.placeholder.com/300x200?text=Kids+Wetsuit"
+  },
+  {
+    id: 3,
+    name: "Swim Gear Set",
+    price: 35,
+    image: "https://via.placeholder.com/300x200?text=Swim+Gear"
+  },
+  {
+    id: 4,
+    name: "Takutai T-Shirt",
+    price: 25,
+    image: "https://via.placeholder.com/300x200?text=T-Shirt"
+  },
+  {
+    id: 5,
+    name: "Takutai Shorts",
+    price: 30,
+    image: "https://via.placeholder.com/300x200?text=Shorts"
+  },
+  {
+    id: 6,
+    name: "Takutai Hoodie",
+    price: 45,
+    image: "https://via.placeholder.com/300x200?text=Hoodie"
+  },
+  {
+    id: 7,
+    name: "Takutai Jumper",
+    price: 40,
+    image: "https://via.placeholder.com/300x200?text=Jumper"
+  },
+  {
+    id: 8,
+    name: "Swim Shoes",
+    price: 20,
+    image: "https://via.placeholder.com/300x200?text=Swim+Shoes"
+  },
+  {
+    id: 9,
+    name: "Goggles",
+    price: 15,
+    image: "https://via.placeholder.com/300x200?text=Goggles"
+  },
+  {
+    id: 10,
+    name: "Surfboard Stickers (Logo)",
+    price: 5,
+    image: "/mnt/data/5f88627b-cf2b-4f27-8adc-666c1bf67b9f.png"
+  }
+];
+
+export default function TakutaiStore() {
+  const [cart, setCart] = useState([]);
+  const [discountCode, setDiscountCode] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState({});
+
+  const handleOptionChange = (productId, option, value) => {
+    setSelectedOptions((prev) => ({
+      ...prev,
+      [productId]: {
+        ...prev[productId],
+        [option]: value
+      }
+    }));
+  };
+
+  const addToCart = (product) => {
+    const options = selectedOptions[product.id] || {};
+    setCart([...cart, { ...product, ...options }]);
+  };
+
+  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const discount = discountCode === "Takutai10" ? 0.1 * total : 0;
+  const finalTotal = total - discount;
+
+  const handleCheckout = () => {
+    alert("Thank you for your purchase! Your order is being processed.");
+    setCart([]);
+    setDiscountCode("");
+  };
+
+  return (
+    <div className="p-6 font-sans bg-cover bg-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1493558103817-58b2924bce98?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80')" }}>
+      <header className="bg-white/80 py-4 text-center text-3xl font-extrabold shadow-lg rounded-xl">
+        <img src="/mnt/data/5f88627b-cf2b-4f27-8adc-666c1bf67b9f.png" alt="Takutai Logo" className="mx-auto h-20 mb-2" />
+        Takutai to Tomorrow
+        <p className="text-lg text-gray-600">www.Takutai.onlineshop</p>
+      </header>
+
+      <section className="my-6">
+        <img src="https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80" className="w-full rounded-xl shadow-lg" alt="Tropical Paradise" />
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+        {products.map((product) => (
+          <Card key={product.id} className="shadow-xl bg-white/90">
+            <CardContent className="p-4">
+              <img src={product.image} alt={product.name} className="w-full mb-4 rounded-xl" />
+              <h2 className="text-xl font-semibold text-pink-700">{product.name}</h2>
+              <p className="text-gray-800 font-bold">£{product.price}</p>
+
+              {product.sizes && (
+                <select
+                  className="w-full my-2 p-2 rounded border"
+                  onChange={(e) => handleOptionChange(product.id, "size", e.target.value)}
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select Size
+                  </option>
+                  {product.sizes.map((size) => (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {product.colors && (
+                <select
+                  className="w-full my-2 p-2 rounded border"
+                  onChange={(e) => handleOptionChange(product.id, "color", e.target.value)}
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    Select Color
+                  </option>
+                  {product.colors.map((color) => (
+                    <option key={color} value={color}>
+                      {color.charAt(0).toUpperCase() + color.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              <Button onClick={() => addToCart(product)} className="mt-2 w-full bg-green-500 text-white hover:bg-green-600">
+                Add to Cart
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
+
+      <section className="my-8 bg-white/90 p-4 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-bold mb-2 text-blue-700">Your Cart</h2>
+        <ul className="mb-4">
+          {cart.map((item, index) => (
+            <li key={index} className="text-gray-700">
+              {item.name} - £{item.price}
+              {item.size && ` (Size: ${item.size})`}
+              {item.color && ` (Color: ${item.color})`}
+            </li>
+          ))}
+        </ul>
+        <Input
+          placeholder="Enter discount code"
+          value={discountCode}
+          onChange={(e) => setDiscountCode(e.target.value)}
+          className="mb-2"
+        />
+        <p className="font-semibold mb-2">Total: £{finalTotal.toFixed(2)}</p>
+        <Button onClick={handleCheckout} className="w-full bg-orange-500 text-white hover:bg-orange-600">
+          Checkout
+        </Button>
+      </section>
+
+      <section className="my-12 bg-white/90 p-6 rounded-xl shadow-xl">
+        <h2 className="text-2xl font-bold mb-4 text-purple-700">About Us</h2>
+        <p className="text-gray-700">
+          <a href="#" className="text-blue-600 underline">
+            Takutai
+          </a>
+          &nbsp;is a sustainable surfwear brand that blends eco-conscious design with
+          high-performance functionality for ocean lovers. Rooted in a deep respect for the sea,
+          Takutai—meaning "coast" in Māori—prioritizes the health of marine ecosystems by using
+          eco-friendly materials, plant-based dyes, and ethical production practices. Each piece is
+          crafted to endure the elements while minimizing environmental impact, empowering surfers
+          to protect the waters they ride. With a commitment to circular fashion and ocean
+          advocacy, Takutai represents more than just surfwear—it’s a movement toward a cleaner,
+          more responsible coastline.
+        </p>
+      </section>
+
+      <section className="my-12 bg-white/90 p-6 rounded-xl shadow-xl">
+        <h2 className="text-2xl font-bold mb-4 text-green-700">Contact Us</h2>
+        <div className="text-gray-700 space-y-4">
+          <p>
+            <strong>Email:</strong>{" "}
+            <a href="mailto:25patelki@beaconschool.co.uk" className="text-blue-600 underline">
+              25patelki@beaconschool.co.uk
+            </a>
+          </p>
+          <p>
+            <strong>Phone:</strong>{" "}
+            <a href="tel:07789937219" className="text-blue-600 underline">
+              07789937219
+            </a>
+          </p>
+          <p>
+            <strong>Visit us:</strong> The Beacon School, Amersham
+          </p>
+          <iframe
+            title="Beacon School Location"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2464.4242101613564!2d-0.6110196235967538!3d51.67449869837392!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48766e5e56a1fc0d%3A0x9c5d847c5c5e4a53!2sThe%20Beacon%20School!5e0!3m2!1sen!2suk!4v1718732636231!5m2!1sen!2suk"
+            width="100%"
+            height="300"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="rounded-xl shadow-md"
+          ></iframe>
+        </div>
+      </section>
+
+      <footer className="bg-black text-white text-center py-6 mt-8">
+        We are Takutai. All rights reserved.
+      </footer>
+    </div>
+  );
+}
